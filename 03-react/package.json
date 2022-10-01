@@ -33,7 +33,6 @@
     ]
   },
   "devDependencies": {
-    "babel-jest": "26.6.0",
-    "prettier": "github:j-f1/prettier#space-after-function"
+    "babel-jest": "26.6.0"
   }
 }
