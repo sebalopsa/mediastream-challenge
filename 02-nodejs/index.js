@@ -1,12 +1,14 @@
 'use strict'
 
 const express = require('express')
-
-const User = require('./models/User')
+const port = 3000
+const usersController = require('./controllers/users')
 
 // Setup Express.js app
 const app = express()
 
-// TODO: everything else
+app.get('/users', (req, res) => usersController.getAllUsersInCsv(req, res))
 
-app.listen(3000)
+app.all('*', (req, res) => res.status(405).send('Method Not Allowed'))
+
+app.listen(port, () => console.log(`Server listening on port ${port}`))

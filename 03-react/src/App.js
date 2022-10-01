@@ -1,7 +1,9 @@
 import { BrowserRouter, Route, Switch } from 'react-router-dom'
+import React from 'react'
+
 import Exercise from './components/pages/Exercise'
 
-function App () {
+const App = () => {
   return (
     <BrowserRouter>
       <Switch>
