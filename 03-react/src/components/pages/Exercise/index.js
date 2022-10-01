@@ -1,7 +1,9 @@
 import './assets/styles.css'
-import { useState } from 'react'
+import React, { useState } from 'react'
+import MoviesList from './MoviesList'
+import ShoppingCart from './ShoppingCart'
 
-export default function Exercise01 () {
+const Exercise01 = () => {
   const movies = [
     {
       id: 1,
@@ -40,74 +42,56 @@ export default function Exercise01 () {
     }
   ]
 
-  const [cart, setCart] = useState([
-    {
-      id: 1,
-      name: 'Star Wars',
-      price: 20,
-      quantity: 2
-    }
-  ])
+  const [cart, setCart] = useState([])
 
-  const getTotal = () => 0 // TODO: Implement this
+  const decrementQuantity = item => {
+    const tempCart = [...cart]
+    const index = tempCart.findIndex(el => el.id === item.id)
+    const itemInCart = tempCart[index]
+    itemInCart.quantity--
+    if (itemInCart.quantity === 0) tempCart.splice(index, 1)
+    setCart(tempCart)
+  }
+  const incrementQuantity = item => {
+    const tempCart = [...cart]
+    const itemInCart = tempCart.find(el => el.id === item.id)
+    itemInCart.quantity++
+    setCart(tempCart)
+  }
+
+  const addToCart = item => {
+    const tempCart = [...cart]
+    const itemInCart = tempCart.find(el => el.id === item.id)
+    if (itemInCart) itemInCart.quantity++
+    else tempCart.push({ ...item, quantity: 1 })
+    setCart(tempCart)
+  }
+
+  const getTotal = () => {
+    let total = cart
+      .map(item => item.price * item.quantity)
+      .reduce((a, b) => a + b, 0)
+
+    for (const discountRule of discountRules) {
+      if (discountRule.m.every(id => cart.map(el => el.id).includes(id))) {
+        total = total * (1 - discountRule.discount)
+      }
+    }
+
+    return total.toFixed(2)
+  }
 
   return (
     <section className="exercise01">
-      <div className="movies__list">
-        <ul>
-          {movies.map(o => (
-            <li className="movies__list-card">
-              <ul>
-                <li>
-                  ID: {o.id}
-                </li>
-                <li>
-                  Name: {o.name}
-                </li>
-                <li>
-                  Price: ${o.price}
-                </li>
-              </ul>
-              <button onClick={() => console.log('Add to cart', o)}>
-                Add to cart
-              </button>
-            </li>
-          ))}
-        </ul>
-      </div>
-      <div className="movies__cart">
-        <ul>
-          {cart.map(x => (
-            <li className="movies__cart-card">
-              <ul>
-                <li>
-                  ID: {x.id}
-                </li>
-                <li>
-                  Name: {x.name}
-                </li>
-                <li>
-                  Price: ${x.price}
-                </li>
-              </ul>
-              <div className="movies__cart-card-quantity">
-                <button onClick={() => console.log('Decrement quantity', x)}>
-                  -
-                </button>
-                <span>
-                  {x.quantity}
-                </span>
-                <button onClick={() => console.log('Increment quantity', x)}>
-                  +
-                </button>
-              </div>
-            </li>
-          ))}
-        </ul>
-        <div className="movies__cart-total">
-          <p>Total: ${getTotal()}</p>
-        </div>
-      </div>
+      <MoviesList movies={movies} addToCart={addToCart} />
+      <ShoppingCart
+        cart={cart}
+        incrementQuantity={incrementQuantity}
+        decrementQuantity={decrementQuantity}
+        getTotal={getTotal}
+      />
     </section>
   )
 }
+
+export default Exercise01
